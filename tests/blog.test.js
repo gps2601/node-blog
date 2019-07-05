@@ -117,6 +117,22 @@ test('deleting posts will delete the post', async () => {
     expect(remainingBlogs.length).toEqual(blogs.length - 1)
 })
 
+test('updating posts will change amount of likes', async () => {
+    const blogsInDb = await Blog.find({})
+    const blogs = blogsInDb.map(blog => blog.toJSON())
+    let blogToUpdate = blogs[0];
+    const initialAmount = blogToUpdate.likes
+    blogToUpdate.likes ++;
+
+    await api.put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+
+    const updatedBlogInDb = await Blog.findById(blogToUpdate.id)
+    const updatedBlog = updatedBlogInDb.toJSON()
+    expect(updatedBlog.likes).toEqual(initialAmount + 1)
+    console.log(updatedBlog)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
