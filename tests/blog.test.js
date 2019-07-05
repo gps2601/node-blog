@@ -48,8 +48,27 @@ test('correct number of blogs returned', async () => {
 
 test('unique identifier is name id', async () => {
     const response = await api.get('/api/blogs')
-    console.log(response)
     expect(response.body[0].id).toBeDefined()
+})
+
+test('posting a blog increases number of blogs', async () => {
+    const newBlog = {
+        title: 'added in the post test',
+        author: 'makavelli',
+        url: 'www.youtube.co.uk',
+        likes: 232
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await Blog.find({})
+    expect(blogsAtEnd.length).toEqual(initialBlogs.length + 1)
+
+    const contents = blogsAtEnd.map(n => n.title)
+    expect(contents).toContain('added in the post test')
 })
 
 afterAll(() => {
