@@ -104,6 +104,19 @@ test('if title and url missing from request, backend responds with 400', async (
     await api.post('/api/blogs').send(newBlog).expect(400)
 })
 
+test('deleting posts will delete the post', async () => {
+    const blogsInDb = await Blog.find({})
+    const blogs = blogsInDb.map(blog => blog.toJSON())
+
+    await api.delete(`/api/blogs/${blogs[0].id}`)
+        .expect(204)
+
+    const remainingBlogsInDb = await Blog.find({})
+    const remainingBlogs = remainingBlogsInDb.map(blog => blog.toJSON())
+
+    expect(remainingBlogs.length).toEqual(blogs.length - 1)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
