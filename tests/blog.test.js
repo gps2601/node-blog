@@ -94,6 +94,16 @@ test('if no like parameter, it will default to zero', async () => {
     expect(response.body.likes).toEqual(0)
 })
 
+test('if title and url missing from request, backend responds with 400', async () => {
+    const newBlog = {
+        author: 'makavelli',
+        url: 'www.youtube.co.uk',
+        likes: 232
+    }
+
+    await api.post('/api/blogs').send(newBlog).expect(400)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
