@@ -71,6 +71,29 @@ test('posting a blog increases number of blogs', async () => {
     expect(contents).toContain('added in the post test')
 })
 
+test('if no like parameter with post, it will default to a value', async () => {
+    const newBlog = {
+        title: 'added in the post test for like being absent',
+        author: 'makavelli',
+        url: 'www.youtube.co.uk',
+    }
+    const response = await api.post('/api/blogs').send(newBlog)
+
+    expect(response.body.likes).toBeDefined()
+})
+
+test('if no like parameter, it will default to zero', async () => {
+    const newBlog = {
+        title: 'added in the post test for like being absent',
+        author: 'makavelli',
+        url: 'www.youtube.co.uk',
+    }
+
+    const response = await api.post('/api/blogs').send(newBlog)
+
+    expect(response.body.likes).toEqual(0)
+})
+
 afterAll(() => {
     mongoose.connection.close()
 })
