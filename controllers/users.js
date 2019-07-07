@@ -5,6 +5,10 @@ const User = require('../models/user')
 usersRouter.post('/api/users', async (request, response, next) => {
     try {
         const body = request.body
+        console.log(body.password)
+        if (body.password.length < 4) {
+            return response.status(400).json({error: 'password is not long enough'})
+        }
 
         const saltRounds = 10
         const passwordHash = await bcrypt.hash(body.password, saltRounds)
@@ -17,7 +21,7 @@ usersRouter.post('/api/users', async (request, response, next) => {
 
         const savedUser = await user.save()
 
-        response.json(savedUser)
+        response.status(201).json(savedUser)
     } catch (exception) {
         next(exception)
     }
